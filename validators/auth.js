@@ -15,5 +15,27 @@ const signupValidator = [
       "Password must contain at least one lower case,one uppercase,one numeric and one special symbol"
     ),
 ];
+const signinValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("Invalid Email")
+    .notEmpty()
+    .withMessage("email is required"),
+  check("password").notEmpty().withMessage("password is required"),
+];
 
-module.exports={signupValidator}
+const emailValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("invalid email")
+    .notEmpty()
+    .withMessage("email is required"),
+
+  // .custom((value, { req }) => {
+  //   if (!value) {
+  //     throw new Error("Email is required");
+  //   }
+  //   return true;
+  // }),
+];
+module.exports = { signupValidator, signinValidator, emailValidator };
