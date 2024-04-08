@@ -25,6 +25,10 @@ app.use("*", (req, res) => {
 //error handling middleware
 app.use((err, req, res, next) => {
   console.log(err);
+   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+     // Handle JSON parsing errors
+     return res.status(400).json({ error: "Invalid JSON" });
+   }
   res.status(500).json({ msg: "some thing went wrong" });
 });
 

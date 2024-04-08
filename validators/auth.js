@@ -30,12 +30,42 @@ const emailValidator = [
     .withMessage("invalid email")
     .notEmpty()
     .withMessage("email is required"),
-
-  // .custom((value, { req }) => {
-  //   if (!value) {
-  //     throw new Error("Email is required");
-  //   }
-  //   return true;
-  // }),
 ];
-module.exports = { signupValidator, signinValidator, emailValidator };
+
+const verifyUserValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("invalid email")
+    .notEmpty()
+    .withMessage("email is required"),
+  check("code").notEmpty().withMessage("Code is required"),
+];
+
+const recoverPasswordValidator = [
+  check("email")
+    .isEmail()
+    .withMessage("invalid email")
+    .notEmpty()
+    .withMessage("email is required"),
+  check("code").notEmpty().withMessage("Code is required"),
+  check("password")
+    .notEmpty()
+    .withMessage("password is required")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/)
+    .withMessage(
+      "Password must contain at least one lower case,one uppercase,one numeric and one special symbol"
+    ),
+];
+
+const changePasswordValidator=[
+  check("oldPassword").notEmpty().withMessage("Old Password is required"),
+  check ("newPassword").notEmpty().withMessage("New Password is required")
+]
+module.exports = {
+  signupValidator,
+  signinValidator,
+  emailValidator,
+  verifyUserValidator,
+  recoverPasswordValidator,
+  changePasswordValidator,
+};
