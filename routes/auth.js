@@ -21,6 +21,7 @@ const {
   verifyUserValidator,
   recoverPasswordValidator,
   changePasswordValidator,
+  updateProfileValidator,
 } = require("../validators/auth");
 const validate = require("../validators/validate");
 const isAuth = require("../middlewares/isAuth");
@@ -257,6 +258,7 @@ router.post(
     }
   }
 );
+
 router.put(
   "/changePassword",
   changePasswordValidator,
@@ -264,7 +266,7 @@ router.put(
   isAuth,
   async (req, res, next) => {
     try {
-      const { oldPassword, newPassword } = req.body;
+      const { newPassword, oldPassword } = req.body;
       const { _id } = req.user;
       const user = await UserSchema.findById(_id);
       if (!user) {
@@ -272,7 +274,7 @@ router.put(
           .status(StatusCode.NOT_FOUND)
           .send({ message: FailedMessage.USER_NOT_FOUND });
       }
-      const match =await comparePassword(oldPassword, user.password);
+      const match = await comparePassword(oldPassword, user.password);
       if (!match) {
         return res
           .status(StatusCode.BAD_REQUEST)
@@ -299,4 +301,80 @@ router.put(
     }
   }
 );
+
+router.put(
+  "/updateProfile",
+  isAuth,
+  updateProfileValidator,
+  validate,
+  async (req, res, next) => {
+    const { _id } = req.user;
+    const { name, email } = req.body;
+    const user = await UserSchema.findById(_id).select(
+      "-password -verificationCode -forgotPasswordCode"
+    );
+    if (!user) {
+      res
+        .status(StatusCode.NOT_FOUND)
+        .send({ message: FailedMessage.USER_NOT_FOUND });
+    }
+
+    //to check if the email is owned by other user
+    if (email) {
+      const isUserExist = await UserSchema.findOne({ email });
+      if (
+        isUserExist &&
+        isUserExist.email === email &&
+        String(user._id) !== String(isUserExist._id)
+      ) {
+        return res
+          .status(StatusCode.BAD_REQUEST)
+          .send({ message: FailedMessage.EMAIL_ALREADY_EXISTS });
+      }
+    }
+
+    user.name = name ? name : user.name;
+    user.email = email ? email : user.email;
+    if (email) {
+      user.isVerified = false;
+    }
+
+    await user.save();
+
+    res.status(StatusCode.SUCCESS).send({
+      status: true,
+      message: SuccessMessages.USER_PROFILE_UPDATED_SUCCESSFULLY,
+      data: user,
+    });
+    try {
+    } catch (error) {
+      res.status(StatusCode.INTERNAL_SERVER_ERROR).send({
+        code: StatusCode.INTERNAL_SERVER_ERROR,
+        status: false,
+        message: FailedMessage.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+);
+router.get("/current-user", isAuth, async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const user = await UserSchema.findById(_id).select(
+      "-password -verificationCode -forgotPasswordCode"
+    );
+    if (!user) {
+      return res
+        .status(StatusCode.NOT_FOUND)
+        .send({ message: FailedMessage.USER_NOT_FOUND });
+    }
+
+    return res
+      .status(StatusCode.SUCCESS)
+      .send({ message: SuccessMessages.USER_FETCHED_SUCCESS, data: user });
+  } catch (error) {
+    return res
+      .status(StatusCode.INTERNAL_SERVER_ERROR)
+      .send({ message: FailedMessage.INTERNAL_SERVER_ERROR });
+  }
+});
 module.exports = router;

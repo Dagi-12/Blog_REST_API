@@ -7,16 +7,29 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 const { port, dbUrl, atlasDbUrl } = require("./config/keys");
-const errorHandler = require("./middlewares/errorHandeler");
 
+const {
+  encryptResponse,
+  decryptRequest,
+} = require("./middlewares/EncryptionDecryption");
+const encryption = {};
 const authRoute = require("./routes/auth");
-
+const categoryRoute = require("./routes/category");
+const fileRoute=require("./routes/file")
+const postRoute=require("./routes/post")
 app.use(express.json({ limit: "500mb" }));
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
 app.use(morgan("dev"));
 
+// app.use(encryptResponse);
+
 //routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/file",fileRoute)
+app.use("/api/v1/post", postRoute);
+
+// app.use(decryptRequest);
 
 app.use("*", (req, res) => {
   res.status(200).json({ msg: "catch all" });
@@ -25,11 +38,11 @@ app.use("*", (req, res) => {
 //error handling middleware
 app.use((err, req, res, next) => {
   console.log(err);
-   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-     // Handle JSON parsing errors
-     return res.status(400).json({ error: "Invalid JSON" });
-   }
-  res.status(500).json({ msg: "some thing went wrong" });
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    // Handle JSON parsing errors
+    return res.status(400).json({ error: "Invalid JSON" });
+  }
+  res.status(500).json({ msg: err.message});
 });
 
 const connectDB = async () => {
@@ -43,7 +56,11 @@ const connectDB = async () => {
 connectDB();
 
 const server = http.createServer(app);
-server.listen(port, (req, res) => {
+server.on("error", (error) => {
+  console.error("Server error:", error);
+  process.exit(1);
+});
+server.listen(port, () => {
   console.log("server is running on port ", port);
 });
 //to prevent idl connections  and save resources
