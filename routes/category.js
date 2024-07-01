@@ -46,6 +46,7 @@ router.post(
       });
       await newCategory.save();
       return res.status(StatusCode.SUCCESS).send({
+        status: true,
         message: SuccessMessages.CATEGORY_ADDED_SUCCESSFULLY,
         data: newCategory,
       });
@@ -136,7 +137,7 @@ router.get("/getCategories", isAuth, async (req, res, next) => {
     const { q, size, page } = req.query;
     let query = {};
 
-    const sizeNumber = parseInt(size) || 10;
+    const sizeNumber = parseInt(size) || 8;
     const pageNumber = parseInt(page) || 1;
     if (q) {
       const search = RegExp(q, "i");
@@ -153,6 +154,7 @@ router.get("/getCategories", isAuth, async (req, res, next) => {
       .limit(sizeNumber)
       .sort({ updatedBy: -1 });
     return res.status(StatusCode.SUCCESS).send({
+      status:true,
       message: SuccessMessages.CATEGORY_LIST_FETCHED_SUCCESSFULLY,
       data: { categories, total, pages },
     });
@@ -176,7 +178,12 @@ router.get(
           .status(StatusCode.NOT_FOUND)
           .send({ message: FailedMessage.CATEGORY_NOT_FOUND });
       }
-      return res.status(StatusCode.SUCCESS).send({message:SuccessMessages.CATEGORY_LIST_FETCHED_SUCCESSFULLY,data:{category}})
+      return res
+        .status(StatusCode.SUCCESS)
+        .send({
+          message: SuccessMessages.CATEGORY_LIST_FETCHED_SUCCESSFULLY,
+          data: { category },
+        });
     } catch (error) {
       return res
         .status(StatusCode.INTERNAL_SERVER_ERROR)

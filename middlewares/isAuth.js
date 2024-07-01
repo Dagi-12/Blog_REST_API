@@ -9,7 +9,7 @@ const isAuth = async (req, res, next) => {
     if (!authorization) {
       return res
         .status(StatusCode.BAD_REQUEST)
-        .send({ message: FailedMessage.TOKEN_IS_REQUIRED });
+        .send({ message: FailedMessage.AUTHORIZATION_FAILED });
     }
 
     const tokenParts = authorization.split(" ");

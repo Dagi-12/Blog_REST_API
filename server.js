@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const http = require("http");
 const morgan = require("morgan");
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const { port, dbUrl, atlasDbUrl } = require("./config/keys");
@@ -15,8 +16,10 @@ const {
 const encryption = {};
 const authRoute = require("./routes/auth");
 const categoryRoute = require("./routes/category");
-const fileRoute=require("./routes/file")
-const postRoute=require("./routes/post")
+const fileRoute = require("./routes/file");
+const postRoute = require("./routes/post");
+
+app.use(cors({ origin: ["http://localhost:5173"] }));
 app.use(express.json({ limit: "500mb" }));
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
 app.use(morgan("dev"));
@@ -26,7 +29,7 @@ app.use(morgan("dev"));
 //routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoute);
-app.use("/api/v1/file",fileRoute)
+app.use("/api/v1/file", fileRoute);
 app.use("/api/v1/post", postRoute);
 
 // app.use(decryptRequest);
@@ -42,7 +45,7 @@ app.use((err, req, res, next) => {
     // Handle JSON parsing errors
     return res.status(400).json({ error: "Invalid JSON" });
   }
-  res.status(500).json({ msg: err.message});
+  res.status(500).json({ msg: err.message });
 });
 
 const connectDB = async () => {

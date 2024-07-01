@@ -79,18 +79,21 @@ router.post("/signin", signinValidator, validate, async (req, res, next) => {
     if (!user) {
       return res
         .status(StatusCode.UNAUTHORIZED)
-        .send({ message: FailedMessage.USER_UNAUTHENTICATED });
+        .send({ message: FailedMessage.USER_NOT_FOUND });
     }
     const match = await comparePassword(password, user.password);
     if (match) {
-      const token = generateToken(user);
-      res
-        .status(StatusCode.SUCCESS)
-        .send({ message: SuccessMessages.LOGIN_SUCCESS, data: { token } });
+      const token = await generateToken(user);
+      const { password,verificationCode,forgotPasswordCode, ...userWithoutPassword } = user.toObject();
+      res.status(StatusCode.SUCCESS).send({
+        status: true,
+        message: SuccessMessages.LOGIN_SUCCESS,
+        data: { token, user: userWithoutPassword },
+      });
     } else {
-      res
+      return res
         .status(StatusCode.UNAUTHORIZED)
-        .send({ message: FailedMessage.USER_UNAUTHENTICATED });
+        .send({ message: FailedMessage.INVALID_PASSWORD });
     }
   } catch (error) {
     res.status(StatusCode.INTERNAL_SERVER_ERROR).send({
