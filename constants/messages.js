@@ -20,7 +20,8 @@ const SuccessMessages = {
   POST_CREATED_SUCCESSFULLY: "Post created successfully",
   POST_UPDATED_SUCCESSFULLY: "Post updated successfully ",
   POST_DELETED_SUCCESSFULLY:"Post deleted successfully",
-  POST_FETCHED_SUCCESSFULLY:"Post fetched successfully"
+  POST_FETCHED_SUCCESSFULLY:"Post fetched successfully",
+  FILE_UPLOADED_SUCCESSFULLY:"File uploaded successfully"
 };
 const FailedMessage = {
   INTERNAL_SERVER_ERROR: "Internal server error",

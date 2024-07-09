@@ -1,6 +1,6 @@
 const express = require("express");
 const { StatusCode } = require("../constants/constant");
-const { FailedMessage } = require("../constants/messages");
+const { FailedMessage, SuccessMessages } = require("../constants/messages");
 const router = express.Router();
 const isAuth = require("../middlewares/isAuth");
 const upload = require("../middlewares/upload");
@@ -10,7 +10,7 @@ router.post("/upload", isAuth, upload.single("image"), async (req, res) => {
     const { file } = req;
     console.log(file);
     const fileData = file.buffer;
-      console.log("fileData", fileData);
+    console.log("fileData", fileData);
     const newFile = new File({
       data: fileData,
       size: file.size,
@@ -18,7 +18,11 @@ router.post("/upload", isAuth, upload.single("image"), async (req, res) => {
       createdBy: req.user,
     });
     await newFile.save();
-    res.send({ message: "okay" });
+    res.send({
+      status: true,
+      message: SuccessMessages.FILE_UPLOADED_SUCCESSFULLY,
+      data: file.filename,
+    });
   } catch (error) {
     return res
       .status(StatusCode.INTERNAL_SERVER_ERROR)

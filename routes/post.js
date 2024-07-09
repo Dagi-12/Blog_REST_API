@@ -46,7 +46,10 @@ router.post(
       await newPost.save();
       return res
         .status(StatusCode.SUCCESS)
-        .send({ message: SuccessMessages.POST_CREATED_SUCCESSFULLY });
+        .send({
+          status: true,
+          message: SuccessMessages.POST_CREATED_SUCCESSFULLY,
+        });
     } catch (error) {
       return res
         .status(StatusCode.INTERNAL_SERVER_ERROR)
