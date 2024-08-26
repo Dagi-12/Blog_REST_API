@@ -148,7 +148,7 @@ router.get("/getPost", isAuth, async (req, res) => {
     const { page, size, q, category } = req.query;
     //the page specifies which page to display
     const pageNumber = parseInt(page) || 1;
-    const sizeNumber = parseInt(size) || 5;
+    const sizeNumber = parseInt(size) || 10;
     let query = {};
     if (q) {
       //here the regex is case insensitive
