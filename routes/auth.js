@@ -84,7 +84,12 @@ router.post("/signin", signinValidator, validate, async (req, res, next) => {
     const match = await comparePassword(password, user.password);
     if (match) {
       const token = await generateToken(user);
-      const { password,verificationCode,forgotPasswordCode, ...userWithoutPassword } = user.toObject();
+      const {
+        password,
+        verificationCode,
+        forgotPasswordCode,
+        ...userWithoutPassword
+      } = user.toObject();
       res.status(StatusCode.SUCCESS).send({
         status: true,
         message: SuccessMessages.LOGIN_SUCCESS,
@@ -136,7 +141,7 @@ router.post(
       });
 
       res.status(StatusCode.SUCCESS).send({
-        success: true,
+        status: true,
         message: SuccessMessages.VERIFICATION_CODE_SENT_SUCCESSFULLY,
       });
     } catch (error) {
@@ -177,7 +182,7 @@ router.post(
       await user.save();
       console.log(user.isVerified);
       res.status(StatusCode.SUCCESS).send({
-        success: true,
+        status: true,
         message: SuccessMessages.USER_VERIFIED_SUCCESSFULLY,
       });
     } catch (error) {
@@ -214,7 +219,10 @@ router.post(
       });
       res
         .status(StatusCode.SUCCESS)
-        .send({ message: SuccessMessages.FORGOT_PASSWORD_CODE_SENT });
+        .send({
+          status: true,
+          message: SuccessMessages.FORGOT_PASSWORD_CODE_SENT,
+        });
     } catch (error) {
       res.status(StatusCode.INTERNAL_SERVER_ERROR).send({
         code: StatusCode.INTERNAL_SERVER_ERROR,
@@ -249,7 +257,7 @@ router.post(
       user.forgotPasswordCode = null;
       await user.save();
       res.status(StatusCode.SUCCESS).send({
-        success: true,
+        status: true,
         message: SuccessMessages.PASSWORD_RECOVERED_SUCCESSFULLY,
       });
     } catch (error) {
@@ -288,13 +296,15 @@ router.put(
           .status(StatusCode.BAD_REQUEST)
           .send({ message: FailedMessage.SAME_OLD_AND_NEW_PASSWORD });
       }
+
       const hashedPassword = await hashPassword(newPassword);
       user.password = hashedPassword;
       await user.save();
 
-      res
-        .status(StatusCode.SUCCESS)
-        .send({ message: SuccessMessages.PASSWORD_CHANGE_SUCCESS });
+      res.status(StatusCode.SUCCESS).send({
+        status: true,
+        message: SuccessMessages.PASSWORD_CHANGE_SUCCESS,
+      });
     } catch (error) {
       res.status(StatusCode.INTERNAL_SERVER_ERROR).send({
         code: StatusCode.INTERNAL_SERVER_ERROR,
@@ -371,9 +381,11 @@ router.get("/current-user", isAuth, async (req, res) => {
         .send({ message: FailedMessage.USER_NOT_FOUND });
     }
 
-    return res
-      .status(StatusCode.SUCCESS)
-      .send({ message: SuccessMessages.USER_FETCHED_SUCCESS, data: user });
+    return res.status(StatusCode.SUCCESS).send({
+      status: true,
+      message: SuccessMessages.USER_FETCHED_SUCCESS,
+      data: user,
+    });
   } catch (error) {
     return res
       .status(StatusCode.INTERNAL_SERVER_ERROR)

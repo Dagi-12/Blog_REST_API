@@ -52,7 +52,7 @@ const recoverPasswordValidator = [
   check("password")
     .notEmpty()
     .withMessage("password is required")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/)
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/)
     .withMessage(
       "Password must contain at least one lower case,one uppercase,one numeric and one special symbol"
     ),
@@ -60,7 +60,14 @@ const recoverPasswordValidator = [
 
 const changePasswordValidator = [
   check("oldPassword").notEmpty().withMessage("Old Password is required"),
-  check("newPassword").notEmpty().withMessage("New Password is required"),
+  check("newPassword")
+    .notEmpty()
+    .withMessage("New Password is required")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/)
+    .withMessage(
+      "Password must contain at least one lower case,one uppercase,one numeric and one special symbol"
+    ),
+  
 ];
 
 const updateProfileValidator = [

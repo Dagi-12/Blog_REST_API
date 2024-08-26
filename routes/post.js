@@ -20,6 +20,7 @@ router.post(
   async (req, res) => {
     try {
       const { title, desc, file, category } = req.body;
+      console.log("body in file", req.body);
       const { _id } = req.user;
       if (file) {
         const isFileExist = await fileSchema.findById(file);
@@ -44,12 +45,10 @@ router.post(
         updatedBy: _id,
       });
       await newPost.save();
-      return res
-        .status(StatusCode.SUCCESS)
-        .send({
-          status: true,
-          message: SuccessMessages.POST_CREATED_SUCCESSFULLY,
-        });
+      return res.status(StatusCode.SUCCESS).send({
+        status: true,
+        message: SuccessMessages.POST_CREATED_SUCCESSFULLY,
+      });
     } catch (error) {
       return res
         .status(StatusCode.INTERNAL_SERVER_ERROR)
@@ -92,6 +91,7 @@ router.put(
         return res
           .status(StatusCode.NOT_FOUND)
           .send({ message: FailedMessage.POST_NOT_FOUND });
+        g;
       }
       post.title = title ? title : post.title;
       post.desc = desc;
@@ -101,6 +101,7 @@ router.put(
 
       await post.save();
       return res.status(StatusCode.SUCCESS).send({
+        status: true,
         message: SuccessMessages.POST_UPDATED_SUCCESSFULLY,
         data: { post },
       });
@@ -130,7 +131,10 @@ router.delete(
       await postSchema.findByIdAndDelete(id);
       return res
         .status(StatusCode.SUCCESS)
-        .send({ message: SuccessMessages.POST_DELETED_SUCCESSFULLY });
+        .send({
+          status: true,
+          message: SuccessMessages.POST_DELETED_SUCCESSFULLY,
+        });
     } catch (error) {
       return res
         .status(StatusCode.INTERNAL_SERVER_ERROR)
@@ -144,7 +148,7 @@ router.get("/getPost", isAuth, async (req, res) => {
     const { page, size, q, category } = req.query;
     //the page specifies which page to display
     const pageNumber = parseInt(page) || 1;
-    const sizeNumber = parseInt(size) || 10;
+    const sizeNumber = parseInt(size) || 5;
     let query = {};
     if (q) {
       //here the regex is case insensitive
@@ -160,15 +164,17 @@ router.get("/getPost", isAuth, async (req, res) => {
 
     console.log("query:-", query);
     const total = await postSchema.countDocuments(query);
+    console.log("total documents", total);
     const pages = Math.ceil(total / sizeNumber);
     const posts = await postSchema
       .find(query)
       .populate("file")
       .populate("category")
       .populate("updatedBy", "-password -forgotPasswordCode -verificationCode")
-      .sort({ updatedBy: -1 })
+      .sort({ createdAt: 1 })
       .skip((pageNumber - 1) * sizeNumber)
       .limit(sizeNumber);
+
     return res.status(StatusCode.SUCCESS).send({
       message: SuccessMessages.POST_FETCHED_SUCCESSFULLY,
       data: { posts, pages, total },

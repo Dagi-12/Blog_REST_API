@@ -19,9 +19,10 @@ const SuccessMessages = {
   CATEGORY_LIST_FETCHED_SUCCESSFULLY: "Category list fetched successfully ",
   POST_CREATED_SUCCESSFULLY: "Post created successfully",
   POST_UPDATED_SUCCESSFULLY: "Post updated successfully ",
-  POST_DELETED_SUCCESSFULLY:"Post deleted successfully",
-  POST_FETCHED_SUCCESSFULLY:"Post fetched successfully",
-  FILE_UPLOADED_SUCCESSFULLY:"File uploaded successfully"
+  POST_DELETED_SUCCESSFULLY: "Post deleted successfully",
+  POST_FETCHED_SUCCESSFULLY: "Post fetched successfully",
+  FILE_UPLOADED_SUCCESSFULLY: "File uploaded successfully",
+  FILE_FETCHED_SUCCESSFULLY:"File fetched successfully"
 };
 const FailedMessage = {
   INTERNAL_SERVER_ERROR: "Internal server error",
@@ -31,10 +32,10 @@ const FailedMessage = {
   USER_NOT_FOUND: "User Not Found",
   USER_IS_ALREADY_VERIFIED: "User is Already Verified",
   INVALID_FORGOT_PASSWORD_CODE: "Invalid forget password code",
-  INVALID_PASSWORD:"Invalid password",
+  INVALID_PASSWORD: "Invalid password",
   TOKEN_IS_REQUIRED: "token is required",
-  SOMETHING_WENT_WRONG:"Something  went wrong",
-  AUTHORIZATION_FAILED:"Not Authorized to make a request",
+  SOMETHING_WENT_WRONG: "Something  went wrong",
+  AUTHORIZATION_FAILED: "Not Authorized to make a request",
   INVALID_TOKEN: "Invalid token",
   USER_UNAUTHORIZED: "User Unauthorized",
   OLD_PASSWORD_DOES_NOT_MATCH: "Old Password Does not match",
@@ -45,6 +46,8 @@ const FailedMessage = {
   TITLE_ALREADY_EXISTS: "Title Already Exists",
   FILE_NOT_FOUND: "File not found",
   POST_NOT_FOUND: "Post not found",
+  NO_FILE_UPLOADED: "No file uploaded",
+  INVALID_MONGO_ID:"Invalid ID"
 };
 
 const EmailMessages = {
