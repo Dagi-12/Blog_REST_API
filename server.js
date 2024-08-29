@@ -50,7 +50,8 @@ app.use((err, req, res, next) => {
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(dbUrl);
+    await mongoose.connect(process.env.ATLAS_DB_URL);
+    // await mongoose.connect(dbUrl);
     console.log("Database Connected Successfully");
   } catch (error) {
     console.log("failed to connect to DataBase", error.message);
